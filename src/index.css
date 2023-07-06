@@ -6,4 +6,5 @@
     margin: 0;
     padding: 0;
     background-color: #192a32;
+    min-height: 100vh;
 }
