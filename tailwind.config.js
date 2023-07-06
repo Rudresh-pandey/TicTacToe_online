@@ -10,7 +10,8 @@ export default {
         "montserrat": ['Montserrat', 'san-sarif']
       },
       colors: {
-        "inputcolor": "#0b1c24"
+        "inputcolor": "#0b1c24",
+        "boxcolor": "#1F3540"
       }
     },
   },

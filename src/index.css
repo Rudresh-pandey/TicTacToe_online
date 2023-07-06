@@ -8,3 +8,9 @@
     background-color: #192a32;
     min-height: 100vh;
 }
+
+@layer components{
+    .box-design{
+        @apply bg-boxcolor shadow-md shadow-inputcolor rounded-lg
+    }
+}
