@@ -11,6 +11,6 @@
 
 @layer components{
     .box-design{
-        @apply bg-boxcolor shadow-md shadow-inputcolor rounded-lg
+        @apply bg-boxcolor shadow-md shadow-inputcolor rounded-lg w-24 h-24
     }
 }
