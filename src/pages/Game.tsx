@@ -2,21 +2,22 @@ import { useState } from "react";
 
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
-  // const [clickedBox, setClickedBox] = useState<number[]>([]);
+  const [clickedBox, setClickedBox] = useState<number[]>([]);
 
-  const clickedBox = [];
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   function fillBox(e) {
-    clickedBox.push(e.target.value);
-    if (currPlayer === 1) {
-      e.target.innerHTML = `X`;
-      e.target.style = "color: rgb(20 184 166)";
-      setCurrPlayer(2);
-    } else if (currPlayer === 2) {
-      e.target.innerHTML = "O";
-      e.target.style = "color: rgb(234 179 8)";
-      setCurrPlayer(1);
+    if (!clickedBox.includes(e.target.value)) {
+      setClickedBox([...clickedBox, e.target.value]);
+      if (currPlayer === 1) {
+        e.target.innerHTML = `X`;
+        e.target.style = "color: rgb(20 184 166)";
+        setCurrPlayer(2);
+      } else if (currPlayer === 2) {
+        e.target.innerHTML = "O";
+        e.target.style = "color: rgb(234 179 8)";
+        setCurrPlayer(1);
+      }
     }
   }
 
