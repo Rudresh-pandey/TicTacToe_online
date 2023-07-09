@@ -1,12 +1,13 @@
 import { GameContext } from "../GameContext";
-import { useContext } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Start() {
-  const { setGameRoomId }: any = useContext(GameContext);
+  const [roomId, setRoomId] = useState("");
+  const { gameRoomId, setGameRoomId, socket }: any = useContext(GameContext);
   const navigate = useNavigate();
+  let roomString = "";
   function createRoom() {
-    let roomString = "";
     const num = Math.floor(Math.random() * (999 - 111) + 111);
     roomString += num;
     roomString += "#";
@@ -49,7 +50,16 @@ function Start() {
     roomString += no;
     roomString += sign[select];
     setGameRoomId(roomString);
-    navigate("/game");
+    socket.emit("create_room", roomString);
+    navigate(`/game/created/${roomString}`);
+  }
+
+  function joinRoom() {
+    setGameRoomId(roomId);
+    if (roomId !== "") {
+      socket.emit("join_room", roomId);
+    }
+    navigate(`/game/joined/${roomId}`);
   }
 
   return (
@@ -74,9 +84,14 @@ function Start() {
             <input
               type="text"
               placeholder="Enter Code"
-              className=" text-white px-2 py-1 text-lg font-semibold bg-inputcolor "
+              className=" text-white px-2 py-1 text-lg font-semibold bg-inputcolor"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
             />
-            <button className=" bg-red-400 px-6 py-1 font-semibold text-lg">
+            <button
+              className=" bg-red-400 px-6 py-1 font-semibold text-lg"
+              onClick={joinRoom}
+            >
               Enter Game
             </button>
             <p>

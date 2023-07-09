@@ -15,6 +15,15 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-    console.log(socket.id);
+    console.log(`connected users: ${socket.id}`);
+
+    socket.on("create_room", (data) => {
+        socket.join(data);
+    })
+
+    socket.on("join_room", (data) => {
+        socket.join(data);
+    })
+
 })
 httpServer.listen(3000);

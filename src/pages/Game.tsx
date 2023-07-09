@@ -1,10 +1,12 @@
 import { useState, useContext } from "react";
 import { GameContext } from "../GameContext";
+import { useParams } from "react-router-dom";
 
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId }: any = useContext(GameContext);
+  let { action, roomid } = useParams();
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   function fillBox(e) {
@@ -25,13 +27,23 @@ function Game() {
   return (
     <div className="text-center flex h-screen text-white font-montserrat">
       <div className="m-auto flex flex-col">
-        <p className=" text-xl">
-          Share this code for connecting other player{" "}
-          <span className=" text-blue-600 text-2xl font-bold">
-            {gameRoomId}
-          </span>{" "}
-          <span className=" absolute -my-2 cursor-pointer">🔗</span>
-        </p>
+        {action === "created" && (
+          <p className=" text-xl">
+            Share this code for connecting other player{" "}
+            <span className=" text-blue-600 text-2xl font-bold">
+              {gameRoomId}
+            </span>{" "}
+            <span className=" absolute -my-2 cursor-pointer">🔗</span>
+          </p>
+        )}
+        {action === "joined" && (
+          <p className=" text-xl">
+            Room joined :{" "}
+            <span className=" text-blue-600 text-2xl font-bold">
+              {gameRoomId}
+            </span>
+          </p>
+        )}
         <div className=" flex flex-col gap-4" style={{ padding: " 24px 15%" }}>
           <div className=" flex justify-between font-bold my-8">
             <p>

@@ -8,7 +8,7 @@ function App() {
     <GameContextProvider>
       <Routes>
         <Route path="/" element={<Start />} />
-        <Route path="/game" element={<Game />} />
+        <Route path="/game/:action/:roomid?" element={<Game />} />
       </Routes>
     </GameContextProvider>
   );
