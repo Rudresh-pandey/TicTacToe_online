@@ -11,7 +11,6 @@ function Start() {
     const num = Math.floor(Math.random() * (999 - 111) + 111);
     roomString += num;
     roomString += "#";
-
     const letters = [
       "a",
       "b",
@@ -50,16 +49,18 @@ function Start() {
     roomString += no;
     roomString += sign[select];
     setGameRoomId(roomString);
-    socket.emit("create_room", roomString);
-    navigate(`/game/created/${roomString}`);
+    const url = encodeURIComponent(roomString);
+    navigate(`/game/created/${url}`);
+    socket.emit("join_room", roomString);
   }
 
   function joinRoom() {
     setGameRoomId(roomId);
     if (roomId !== "") {
+      const url = encodeURIComponent(roomId);
+      navigate(`/game/joined/${url}`);
       socket.emit("join_room", roomId);
     }
-    navigate(`/game/joined/${roomId}`);
   }
 
   return (

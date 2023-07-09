@@ -1,28 +1,61 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { GameContext } from "../GameContext";
 import { useParams } from "react-router-dom";
 
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
-  const { gameRoomId }: any = useContext(GameContext);
-  let { action, roomid } = useParams();
+  const { gameRoomId, socket }: any = useContext(GameContext);
+  const { action, roomid }: any = useParams();
+  const boxRef = useRef<HTMLDivElement>(null);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   function fillBox(e) {
+    e.preventDefault();
+    const boxId = e.target.value;
     if (!clickedBox.includes(e.target.value)) {
-      setClickedBox([...clickedBox, e.target.value]);
-      if (currPlayer === 1) {
-        e.target.innerHTML = `X`;
-        e.target.style = "color: rgb(20 184 166)";
+      // setClickedBox([...clickedBox, e.target.value]);
+      const roomId = decodeURIComponent(roomid);
+      console.log(roomId);
+      socket.emit("send_box", { boxId, roomId, currPlayer });
+      checkPlayer(e);
+    }
+  }
+
+  function checkPlayer(e) {
+    if (currPlayer === 1) {
+      e.target.innerHTML = `X`;
+      e.target.style = "color: rgb(20 184 166)";
+      setCurrPlayer(2);
+    } else if (currPlayer === 2) {
+      e.target.innerHTML = "O";
+      e.target.style = "color: rgb(234 179 8)";
+      setCurrPlayer(1);
+    }
+  }
+  function checkSecondPlayer(player) {
+    if (boxRef.current) {
+      if (player === 1) {
+        boxRef.current.innerHTML = `X`;
+        // boxRef.current = "color: rgb(20 184 166)";
         setCurrPlayer(2);
-      } else if (currPlayer === 2) {
-        e.target.innerHTML = "O";
-        e.target.style = "color: rgb(234 179 8)";
+      } else if (player === 2) {
+        boxRef.current.innerHTML = "O";
+        // e.target.style = "color: rgb(234 179 8)";
         setCurrPlayer(1);
       }
     }
   }
+
+  useEffect(() => {
+    socket.on("received_box", (data) => {
+      setClickedBox([...clickedBox, data.boxId]);
+      console.log(data.boxId);
+      // setCurrPlayer(data.currPlayer);
+      // checkPlayer(data.currPlayer);
+      checkSecondPlayer(data.currPlayer);
+    });
+  }, [socket]);
 
   return (
     <div className="text-center flex h-screen text-white font-montserrat">
@@ -106,10 +139,13 @@ function Game() {
             }}
           >
             {Game.map((box) => {
+              let id = "";
+              id += box;
               return (
                 <button
                   key={box}
                   value={box}
+                  ref={boxRef}
                   className=" box-design font-bold text-4xl"
                   onClick={fillBox}
                 ></button>

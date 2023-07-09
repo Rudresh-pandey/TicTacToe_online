@@ -17,12 +17,14 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log(`connected users: ${socket.id}`);
 
-    socket.on("create_room", (data) => {
+    socket.on("join_room", (data) => {
+        console.log(data);
         socket.join(data);
     })
 
-    socket.on("join_room", (data) => {
-        socket.join(data);
+    socket.on("send_box", (data) => {
+        console.log(data.roomId, data.boxId)
+        socket.to(data.roomId).emit("received_box", data);
     })
 
 })
