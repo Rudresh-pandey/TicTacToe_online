@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        "montserrat": ['Montserrat', 'san-sarif']
+        "montserrat": ['Montserrat', 'inherit']
       },
       colors: {
         "inputcolor": "#0b1c24",

@@ -1,4 +1,57 @@
+import { GameContext } from "../GameContext";
+import { useContext } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+
 function Start() {
+  const { setGameRoomId }: any = useContext(GameContext);
+  const navigate = useNavigate();
+  function createRoom() {
+    let roomString = "";
+    const num = Math.floor(Math.random() * (999 - 111) + 111);
+    roomString += num;
+    roomString += "#";
+
+    const letters = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z",
+    ];
+    const sign = ["!", "@", "$", "%", "^", "&", "*"];
+    const select = Math.floor(Math.random() * 7);
+    const l1 = Math.floor(Math.random() * 26);
+    const l2 = Math.floor(Math.random() * 26);
+    const no = Math.floor(Math.random() * 10);
+    roomString += letters[l1];
+    roomString += letters[l2];
+    roomString += no;
+    roomString += sign[select];
+    setGameRoomId(roomString);
+    navigate("/game");
+  }
+
   return (
     <div>
       <div className=" text-center flex h-screen text-white font-montserrat">
@@ -30,7 +83,10 @@ function Start() {
               <span className=" text-teal-500 font-bold text-lg">O</span>
               <span className=" text-yellow-500 font-bold text-lg">R</span>
             </p>
-            <button className=" bg-red-400 px-6 py-1 font-semibold text-lg">
+            <button
+              className=" bg-red-400 px-6 py-1 font-semibold text-lg"
+              onClick={createRoom}
+            >
               Create Room
             </button>
           </div>
