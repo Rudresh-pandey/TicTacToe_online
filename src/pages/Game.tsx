@@ -7,14 +7,14 @@ function Game() {
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
   const { action, roomid }: any = useParams();
-  const boxRef = useRef<HTMLDivElement>(null);
+  const boxRef: any = useRef([]);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   function fillBox(e) {
     e.preventDefault();
     const boxId = e.target.value;
     if (!clickedBox.includes(e.target.value)) {
-      // setClickedBox([...clickedBox, e.target.value]);
+      setClickedBox([...clickedBox, e.target.value]);
       const roomId = decodeURIComponent(roomid);
       console.log(roomId);
       socket.emit("send_box", { boxId, roomId, currPlayer });
@@ -33,14 +33,16 @@ function Game() {
       setCurrPlayer(1);
     }
   }
-  function checkSecondPlayer(player) {
-    if (boxRef.current) {
+  function checkSecondPlayer(player, box) {
+    if (boxRef.current[player]) {
       if (player === 1) {
-        boxRef.current.innerHTML = `X`;
+        boxRef.current[box].textContent = `X`;
+        boxRef.current[box].style.color = "rgb(20 184 166)";
         // boxRef.current = "color: rgb(20 184 166)";
         setCurrPlayer(2);
       } else if (player === 2) {
-        boxRef.current.innerHTML = "O";
+        boxRef.current[box].textContent = "O";
+        boxRef.current[box].style.color = "rgb(234 179 8)";
         // e.target.style = "color: rgb(234 179 8)";
         setCurrPlayer(1);
       }
@@ -53,7 +55,7 @@ function Game() {
       console.log(data.boxId);
       // setCurrPlayer(data.currPlayer);
       // checkPlayer(data.currPlayer);
-      checkSecondPlayer(data.currPlayer);
+      checkSecondPlayer(data.currPlayer, data.boxId);
     });
   }, [socket]);
 
@@ -61,7 +63,7 @@ function Game() {
     <div className="text-center flex h-screen text-white font-montserrat">
       <div className="m-auto flex flex-col">
         {action === "created" && (
-          <p className=" text-xl">
+          <p className=" text-xl font-semibold">
             Share this code for connecting other player{" "}
             <span className=" text-blue-600 text-2xl font-bold">
               {gameRoomId}
@@ -70,14 +72,19 @@ function Game() {
           </p>
         )}
         {action === "joined" && (
-          <p className=" text-xl">
+          <p className=" text-xl font-semibold w-64">
             Room joined :{" "}
             <span className=" text-blue-600 text-2xl font-bold">
               {gameRoomId}
             </span>
           </p>
         )}
-        <div className=" flex flex-col gap-4" style={{ padding: " 24px 15%" }}>
+        <div
+          className=" flex flex-col gap-4"
+          style={
+            action === "joined" ? { padding: "0" } : { padding: " 24px 15%" }
+          }
+        >
           <div className=" flex justify-between font-bold my-8">
             <p>
               Player 1 : <span className=" text-xl text-teal-500">X</span>
@@ -139,13 +146,13 @@ function Game() {
             }}
           >
             {Game.map((box) => {
-              let id = "";
-              id += box;
+              // let id = "";
+              // id += box;
               return (
                 <button
                   key={box}
                   value={box}
-                  ref={boxRef}
+                  ref={(el) => (boxRef.current[box] = el)}
                   className=" box-design font-bold text-4xl"
                   onClick={fillBox}
                 ></button>
