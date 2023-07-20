@@ -4,28 +4,32 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
-
+  const [count, setCount] = useState(0);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
   const { action, roomid }: any = useParams();
-
+  const navigate = useNavigate();
   const boxRef: any = useRef([]);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
+  const roomId = decodeURIComponent(roomid);
   function fillBox(e) {
     e.preventDefault();
 
     const boxId = e.target.value;
     if (!clickedBox.includes(e.target.value)) {
       setClickedBox([...clickedBox, e.target.value]);
-      const roomId = decodeURIComponent(roomid);
       console.log(roomId);
-      socket.emit("send_box", { boxId, roomId, currPlayer });
+      setCount(count + 1);
+      console.log(count);
+      socket.emit("send_box", { boxId, roomId, currPlayer, count });
       checkPlayer(e);
+    }
+    if (count == 8) {
+      navigate(`/result/${roomId}`);
     }
   }
 
-  function checkPlayer(e) {
+  function checkPlayer(e: any) {
     if (currPlayer === 1) {
       e.target.innerHTML = `X`;
       e.target.style = "color: rgb(20 184 166)";
@@ -36,26 +40,28 @@ function Game() {
       setCurrPlayer(1);
     }
   }
-  function checkSecondPlayer(player, box) {
+  function checkSecondPlayer(player: number, box: number) {
     if (boxRef.current[player]) {
       if (player === 1) {
         boxRef.current[box].textContent = `X`;
         boxRef.current[box].style.color = "rgb(20 184 166)";
-        // boxRef.current = "color: rgb(20 184 166)";
         setCurrPlayer(2);
       } else if (player === 2) {
         boxRef.current[box].textContent = "O";
         boxRef.current[box].style.color = "rgb(234 179 8)";
-        // e.target.style = "color: rgb(234 179 8)";
         setCurrPlayer(1);
       }
     }
   }
 
   useEffect(() => {
-    socket.on("received_box", (data) => {
+    socket.on("received_box", (data: any) => {
+      setCount(data.count + 1);
       setClickedBox([...clickedBox, data.boxId]);
       checkSecondPlayer(data.currPlayer, data.boxId);
+      if (data.count == 8) {
+        navigate(`/result/${roomId}`);
+      }
     });
   }, [socket]);
 
@@ -146,8 +152,6 @@ function Game() {
             }}
           >
             {Game.map((box) => {
-              // let id = "";
-              // id += box;
               return (
                 <button
                   key={box}
