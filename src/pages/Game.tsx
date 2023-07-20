@@ -1,17 +1,20 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import { GameContext } from "../GameContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
+
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
   const { action, roomid }: any = useParams();
+
   const boxRef: any = useRef([]);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   function fillBox(e) {
     e.preventDefault();
+
     const boxId = e.target.value;
     if (!clickedBox.includes(e.target.value)) {
       setClickedBox([...clickedBox, e.target.value]);
@@ -52,9 +55,6 @@ function Game() {
   useEffect(() => {
     socket.on("received_box", (data) => {
       setClickedBox([...clickedBox, data.boxId]);
-      console.log(data.boxId);
-      // setCurrPlayer(data.currPlayer);
-      // checkPlayer(data.currPlayer);
       checkSecondPlayer(data.currPlayer, data.boxId);
     });
   }, [socket]);
