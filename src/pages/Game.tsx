@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [count, setCount] = useState(0);
-  const [winner, setWinner] = useState("Draw");
+  const [winner, setWinner] = useState(0);
   const [clip, setClip] = useState(false);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
@@ -24,6 +24,24 @@ function Game() {
     [3, 5, 7],
   ];
   const roomId = decodeURIComponent(roomid);
+
+  function checkWinner() {
+    // const winningCombinations = [
+    //   [-1, -1, -1],
+    //   [-2, -2, -2],
+    // ];
+    for (const combination of Win) {
+      const checkPlayer1 = combination.every((ele) => ele === -1);
+      const checkPlayer2 = combination.every((ele) => ele === -2);
+      if (checkPlayer1) {
+        return 1;
+      }
+      if (checkPlayer2) {
+        return 2;
+      }
+    }
+    return 0;
+  }
   function fillBox(e) {
     e.preventDefault();
 
@@ -41,32 +59,38 @@ function Game() {
     }
   }
 
+  function markForPlayer1(boxId: number) {
+    for (const combination of Win) {
+      const index = combination.indexOf(boxId);
+      if (index !== -1) {
+        combination[index] = -1;
+      }
+    }
+  }
+  function markForPlayer2(boxId: number) {
+    for (const combination of Win) {
+      const index = combination.indexOf(boxId);
+      if (index !== -1) {
+        combination[index] = -2;
+      }
+    }
+  }
   function checkPlayer(e: any) {
     const boxId = e.target.value;
     if (currPlayer === 1) {
-      for (let i = 0; i < Win.length; i++) {
-        const index = Win[i].indexOf(boxId);
-        if (index !== -1) {
-          Win[i][index] = -1;
-          console.log(Win[i][index]);
-        }
-      }
       e.target.innerHTML = `X`;
       e.target.style = "color: rgb(20 184 166)";
+      markForPlayer1(boxId);
       setCurrPlayer(2);
     } else if (currPlayer === 2) {
-      for (let i = 0; i < Win.length; i++) {
-        const index = Win[i].indexOf(boxId);
-        if (index !== -2) {
-          Win[i][index] = -2;
-          console.log(Win[i][index]);
-        }
-      }
       e.target.innerHTML = "O";
       e.target.style = "color: rgb(234 179 8)";
+      markForPlayer2(boxId);
       setCurrPlayer(1);
     }
+    const playerWon: any = checkWinner();
     console.log(Win);
+    setWinner(playerWon);
     console.log(winner);
   }
   function checkSecondPlayer(player: number, box: number) {
@@ -74,12 +98,18 @@ function Game() {
       if (player === 1) {
         boxRef.current[box].textContent = `X`;
         boxRef.current[box].style.color = "rgb(20 184 166)";
+        markForPlayer1(box);
         setCurrPlayer(2);
       } else if (player === 2) {
         boxRef.current[box].textContent = "O";
         boxRef.current[box].style.color = "rgb(234 179 8)";
+        markForPlayer2(box);
         setCurrPlayer(1);
       }
+      const playerWon: any = checkWinner();
+      console.log(Win);
+      setWinner(playerWon);
+      console.log(winner);
     }
   }
 
@@ -98,7 +128,6 @@ function Game() {
       }
     });
   }, [socket]);
-
   return (
     <div className="text-center flex h-screen text-white font-montserrat">
       <div className="m-auto flex flex-col">
