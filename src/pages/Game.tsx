@@ -5,12 +5,24 @@ import { useNavigate, useParams } from "react-router-dom";
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [count, setCount] = useState(0);
+  const [winner, setWinner] = useState("Draw");
+  const [clip, setClip] = useState(false);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
   const { action, roomid }: any = useParams();
   const navigate = useNavigate();
   const boxRef: any = useRef([]);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let Win = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7],
+  ];
   const roomId = decodeURIComponent(roomid);
   function fillBox(e) {
     e.preventDefault();
@@ -30,15 +42,32 @@ function Game() {
   }
 
   function checkPlayer(e: any) {
+    const boxId = e.target.value;
     if (currPlayer === 1) {
+      for (let i = 0; i < Win.length; i++) {
+        const index = Win[i].indexOf(boxId);
+        if (index !== -1) {
+          Win[i][index] = -1;
+          console.log(Win[i][index]);
+        }
+      }
       e.target.innerHTML = `X`;
       e.target.style = "color: rgb(20 184 166)";
       setCurrPlayer(2);
     } else if (currPlayer === 2) {
+      for (let i = 0; i < Win.length; i++) {
+        const index = Win[i].indexOf(boxId);
+        if (index !== -2) {
+          Win[i][index] = -2;
+          console.log(Win[i][index]);
+        }
+      }
       e.target.innerHTML = "O";
       e.target.style = "color: rgb(234 179 8)";
       setCurrPlayer(1);
     }
+    console.log(Win);
+    console.log(winner);
   }
   function checkSecondPlayer(player: number, box: number) {
     if (boxRef.current[player]) {
@@ -52,6 +81,11 @@ function Game() {
         setCurrPlayer(1);
       }
     }
+  }
+
+  function copyToClipBoard() {
+    navigator.clipboard.writeText(gameRoomId);
+    setClip(true);
   }
 
   useEffect(() => {
@@ -74,7 +108,13 @@ function Game() {
             <span className=" text-blue-600 text-2xl font-bold">
               {gameRoomId}
             </span>{" "}
-            <span className=" absolute -my-2 cursor-pointer">🔗</span>
+            <span
+              className=" absolute -my-2 cursor-pointer"
+              onClick={copyToClipBoard}
+            >
+              🔗
+              {clip ? <span style={{ fontSize: "12px" }}>copied!</span> : ""}
+            </span>
           </p>
         )}
         {action === "joined" && (
