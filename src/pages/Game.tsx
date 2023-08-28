@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom";
 function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [count, setCount] = useState(0);
-  const [winner, setWinner] = useState(0);
   const [clip, setClip] = useState(false);
   const [clickedBox, setClickedBox] = useState<number[]>([]);
   const { gameRoomId, socket }: any = useContext(GameContext);
@@ -23,93 +22,73 @@ function Game() {
     [1, 5, 9],
     [3, 5, 7],
   ];
+
   const roomId = decodeURIComponent(roomid);
 
-  function checkWinner() {
-    // const winningCombinations = [
-    //   [-1, -1, -1],
-    //   [-2, -2, -2],
-    // ];
-    for (const combination of Win) {
-      const checkPlayer1 = combination.every((ele) => ele === -1);
-      const checkPlayer2 = combination.every((ele) => ele === -2);
-      if (checkPlayer1) {
-        return 1;
-      }
-      if (checkPlayer2) {
-        return 2;
-      }
-    }
-    return 0;
-  }
   function fillBox(e) {
     e.preventDefault();
-
     const boxId = e.target.value;
     if (!clickedBox.includes(e.target.value)) {
       setClickedBox([...clickedBox, e.target.value]);
       console.log(roomId);
       setCount(count + 1);
       console.log(count);
+
       socket.emit("send_box", { boxId, roomId, currPlayer, count });
       checkPlayer(e);
-    }
-    if (count == 8) {
-      navigate(`/result/${roomId}`);
+      if (count == 8) {
+        navigate(`/result/${roomId}`);
+      }
     }
   }
 
-  function markForPlayer1(boxId: number) {
-    for (const combination of Win) {
-      const index = combination.indexOf(boxId);
-      if (index !== -1) {
-        combination[index] = -1;
-      }
-    }
-  }
-  function markForPlayer2(boxId: number) {
-    for (const combination of Win) {
-      const index = combination.indexOf(boxId);
-      if (index !== -1) {
-        combination[index] = -2;
-      }
-    }
-  }
+  // function markForPlayer1(boxId: number) {
+  //   for (const combination of Win) {
+  //     const index = combination.indexOf(boxId);
+  //     if (index !== -1) {
+  //       combination[index] = -1;
+  //     }
+  //   }
+  // }
+  // function markForPlayer2(boxId: number) {
+  //   for (const combination of Win) {
+  //     const index = combination.indexOf(boxId);
+  //     if (index !== -1) {
+  //       combination[index] = -2;
+  //     }
+  //   }
+  // }
   function checkPlayer(e: any) {
-    const boxId = e.target.value;
+    const boxId: number = e.target.value;
     if (currPlayer === 1) {
       e.target.innerHTML = `X`;
       e.target.style = "color: rgb(20 184 166)";
-      markForPlayer1(boxId);
+      // markForPlayer1(boxId);
+
       setCurrPlayer(2);
     } else if (currPlayer === 2) {
       e.target.innerHTML = "O";
       e.target.style = "color: rgb(234 179 8)";
-      markForPlayer2(boxId);
+      // markForPlayer2(boxId);
+
       setCurrPlayer(1);
     }
-    const playerWon: any = checkWinner();
-    console.log(Win);
-    setWinner(playerWon);
-    console.log(winner);
   }
   function checkSecondPlayer(player: number, box: number) {
     if (boxRef.current[player]) {
       if (player === 1) {
         boxRef.current[box].textContent = `X`;
         boxRef.current[box].style.color = "rgb(20 184 166)";
-        markForPlayer1(box);
+        // markForPlayer1(box);
+
         setCurrPlayer(2);
       } else if (player === 2) {
         boxRef.current[box].textContent = "O";
         boxRef.current[box].style.color = "rgb(234 179 8)";
-        markForPlayer2(box);
+        // markForPlayer2(box);
+
         setCurrPlayer(1);
       }
-      const playerWon: any = checkWinner();
-      console.log(Win);
-      setWinner(playerWon);
-      console.log(winner);
     }
   }
 
@@ -168,51 +147,7 @@ function Game() {
               Player 2 : <span className=" text-xl text-yellow-500">O</span>
             </p>
           </div>
-          {/* <div className=" flex flex-col gap-8">
-            <div className=" flex justify-between">
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-                onClick={fillBox}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-            </div>
-            <div className=" flex justify-between">
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-            </div>
-            <div className=" flex justify-between">
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-              <div
-                className=" box-design"
-                style={{ width: "100px", height: "100px" }}
-              ></div>
-            </div>
-          </div> */}
+
           <div
             style={{
               display: "grid",
