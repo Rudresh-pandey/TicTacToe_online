@@ -18,6 +18,50 @@ Player can create a Room or join any room using RoomCode , tech used : Typescrip
 
 Want to suggest any thing? Make a PR 👍
 
+## How to Run the Project
+
+Follow these steps to set up and run the project on your local machine:
+
+**Installation**
+
+1. **Clone the Repository:**
+
+   ```
+   git clone https://github.com/Rudresh-pandey/TicTacToe_online.git
+   ```
+
+2. **Navigate to the project Directory and install dependencies**: there are two main directories - /root (frontend) /api (backend)
+   in root directory :
+
+   ```
+   npm install
+   ```
+
+   and in api directory :
+
+   ```
+   cd api
+   npm install
+   ```
+
+3. **Start the application**
+
+   in root directory :
+
+   ```
+   npm run dev
+   ```
+
+   in api directory :
+
+   ```
+   npm start
+   ```
+
+4. **Access the Application:**
+
+   Open your web browser and navigate to http://127.0.0.1:5173/ or any other url provided by vite
+
 ## How to Contribute
 
 Thank you for considering contributing to our project! We welcome contributions from developers, designers, testers, and anyone passionate about making our game even better. Your input is highly valuable to us.
