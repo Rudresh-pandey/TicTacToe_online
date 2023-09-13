@@ -2,6 +2,8 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors"
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -27,4 +29,8 @@ io.on("connection", (socket) => {
     })
 
 })
-httpServer.listen(3000);
+if (process.env.SERVER_PORT) {
+    httpServer.listen(process.env.SERVER_PORT);
+}
+
+export default httpServer;
