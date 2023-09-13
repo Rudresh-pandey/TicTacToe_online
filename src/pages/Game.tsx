@@ -6,42 +6,73 @@ function Game() {
   const [currPlayer, setCurrPlayer] = useState(1);
   const [count, setCount] = useState(0);
   const [clip, setClip] = useState(false);
+  const [markBoxValue, setMarkBoxValue] = useState(Array(9).fill(null));
   const [clickedBox, setClickedBox] = useState<number[]>([]);
-  const { gameRoomId, socket }: any = useContext(GameContext);
+  const [winner, setWinner] = useState(0);
+  const { gameRoomId, socket, setGameWinner }: any = useContext(GameContext);
   const { action, roomid }: any = useParams();
   const navigate = useNavigate();
   const boxRef: any = useRef([]);
   const Game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  let Win = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-    [1, 4, 7],
-    [2, 5, 8],
-    [3, 6, 9],
-    [1, 5, 9],
-    [3, 5, 7],
-  ];
+  const checkWinner = (board) => {
+    const Win = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let i = 0; i < Win.length; i++) {
+      const [a, b, c] = Win[i];
+      if (board[a] !== null && board[a] === board[b] && board[a] === board[c]) {
+        setWinner(board[a]);
+        return board[a];
+      }
+    }
+    return 0;
+  };
 
   const roomId = decodeURIComponent(roomid);
 
   function fillBox(e) {
     e.preventDefault();
     const boxId = e.target.value;
-    if (!clickedBox.includes(e.target.value)) {
+    if (!clickedBox.includes(e.target.value) && winner === 0) {
       setClickedBox([...clickedBox, e.target.value]);
+      console.log(".................");
       console.log(roomId);
       setCount(count + 1);
       console.log(count);
 
-      socket.emit("send_box", { boxId, roomId, currPlayer, count });
+      const copyState = Array.from(markBoxValue);
+      copyState[boxId - 1] = currPlayer;
+      setMarkBoxValue(copyState);
+
+      const win = checkWinner(copyState);
+      console.log(".........current winner :", win);
+      socket.emit("send_box", {
+        boxId,
+        roomId,
+        currPlayer,
+        count,
+        win,
+        copyState,
+      });
+      if (win !== 0) {
+        setGameWinner(win);
+        navigate(`/result/${roomId}`);
+      }
       checkPlayer(e);
       if (count == 8) {
+        setGameWinner(0);
         navigate(`/result/${roomId}`);
       }
     }
   }
-
+  console.log(markBoxValue);
   // function markForPlayer1(boxId: number) {
   //   for (const combination of Win) {
   //     const index = combination.indexOf(boxId);
@@ -102,7 +133,14 @@ function Game() {
       setCount(data.count + 1);
       setClickedBox([...clickedBox, data.boxId]);
       checkSecondPlayer(data.currPlayer, data.boxId);
+      setMarkBoxValue(data.copyState);
+      setWinner(data.win);
+      if (data.win !== 0) {
+        setGameWinner(data.win);
+        navigate(`/result/${roomId}`);
+      }
       if (data.count == 8) {
+        setGameWinner(0);
         navigate(`/result/${roomId}`);
       }
     });

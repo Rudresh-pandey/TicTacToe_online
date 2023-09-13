@@ -16,7 +16,6 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
     console.log(`connected users: ${socket.id}`);
-
     socket.on("join_room", (data) => {
         console.log(data);
         socket.join(data);
