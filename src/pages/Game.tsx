@@ -149,7 +149,7 @@ function Game() {
     <div className="text-center flex h-screen text-white font-montserrat">
       <div className="m-auto flex flex-col">
         {action === "created" && (
-          <p className=" text-xl font-semibold">
+          <p className=" text-xl font-semibold w-64 mx-auto">
             Share this code for connecting other player{" "}
             <span className=" text-blue-600 text-2xl font-bold">
               {gameRoomId}
@@ -171,12 +171,7 @@ function Game() {
             </span>
           </p>
         )}
-        <div
-          className=" flex flex-col gap-4"
-          style={
-            action === "joined" ? { padding: "0" } : { padding: " 24px 15%" }
-          }
-        >
+        <div className=" flex flex-col gap-4" style={{ padding: 0 }}>
           <div className=" flex justify-between font-bold my-8">
             <p>
               Player 1 : <span className=" text-xl text-teal-500">X</span>

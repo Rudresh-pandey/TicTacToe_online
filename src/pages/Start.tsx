@@ -1,6 +1,6 @@
 import { GameContext } from "../GameContext";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Start() {
   const [roomId, setRoomId] = useState("");
@@ -73,11 +73,21 @@ function Start() {
           <p>online multiplayer</p>
           <div className=" flex gap-6 justify-center my-6 ">
             <div className="flex items-center bg-stone-600 cursor-pointer">
-              <i className="fa fa-star-o text-lg text-yellow-500 font-semibold bg-stone-900 px-2  "></i>
+              <Link
+                to={"https://github.com/Rudresh-pandey/TicTacToe_online"}
+                target="blank"
+              >
+                <i className="fa fa-star-o text-lg text-yellow-500 font-semibold bg-stone-900 px-2  "></i>
+              </Link>
               <p className="px-2">Star</p>
             </div>
             <div className="flex items-center bg-stone-600 cursor-pointer">
-              <i className="fa fa-code-fork text-lg text-teal-500 font-semibold bg-stone-900 px-2 "></i>
+              <Link
+                to={"https://github.com/Rudresh-pandey/TicTacToe_online"}
+                target="blank"
+              >
+                <i className="fa fa-code-fork text-lg text-teal-500 font-semibold bg-stone-900 px-2 "></i>
+              </Link>
               <p className="px-2">Fork</p>
             </div>
           </div>
